@@ -94,32 +94,28 @@ void doNumber(byte num, byte r, byte c) {
   }
 }
 
-/*int menu(void){
-lcd.clear();
-lcd.setCursor(0,0);
-lcd.print("Set Time");
-
-lcd.setCursor(0,1);
-lcd.print("Hour: ");
-lcd.print(hourDecimal);
-lcd.print(hourUnit);
-}
-*/
 
 int readKey(){
+  int anRead = 0;
   int read = 0;
   int key = 0;
+  anRead = analogRead(A0);
+//  delay(50);
   read = analogRead(A0);
-  if(read>1000){key=0;}
-  else if(read<20){key=1;}
-  else if(read>120 && read<140){key=2;}
-  else if(read>310 && read<340){key=3;}
-  else if(read>470 && read<500){key=4;}
-  else if(read>710 && read<750){key=5;}
-  Serial.print(key);
-  return key;
+  if(read == anRead){
+    if(read>1000){key=0;}
+    else if(read<20){key=1;}
+    else if(read>120 && read<140){key=2;}
+    else if(read>310 && read<340){key=3;}
+    else if(read>470 && read<500){key=4;}
+    else if(read>710 && read<750){key=5;}
+    Serial.print("botao: ");
+    Serial.println(key);
+    return key;
+  }
 }
 
+/*
 boolean debounce(boolean last){
   boolean current = readKey();
   if(last != current){
@@ -128,7 +124,7 @@ boolean debounce(boolean last){
   }
   return current;
 }
-
+*/
 
 void setup(){
 
@@ -161,8 +157,15 @@ void loop(){
   DateTime now = rtc.now();
 
   //Debounce
-  currentUp = debounce(lastUp);
-  currentDown = debounce(lastDown);
+  int button = 0;
+  button = readKey();
+  delay(200);
+  if(button == 1){currentUp = HIGH; lastUp = LOW;}
+  else if (button == 2){currentDown = HIGH;}
+  Serial.print("Loop: ");
+  Serial.println(button);
+  //currentUp = debounce(lastUp);
+  //currentDown = debounce(lastDown);
 
   //Move pages functions
   //Page Up
@@ -171,8 +174,8 @@ void loop(){
     if(pageCounter <3){
       pageCounter = pageCounter +1;
     }
-    else{
-      pageCounter = 3;
+    else if(pageCounter == 3){
+      pageCounter = 1;
     }
   }
   lastUp = currentUp;
