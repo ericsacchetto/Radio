@@ -16,11 +16,9 @@ int right = 3;
 int left = 4;
 int timeSet = 5;
 
-boolean currentUp = LOW;
-boolean lastUp = LOW;
-boolean currentDown = LOW;
-boolean lastDown = LOW;
-
+//Debounce
+unsigned long debounceTime = 0;
+unsigned long debounceDelay = 2000;
 
 //BigFont
 byte x10[8] = {0x07,0x07,0x07,0x00,0x00,0x00,0x00,0x00};
@@ -96,35 +94,32 @@ void doNumber(byte num, byte r, byte c) {
 
 
 int readKey(){
-  int anRead = 0;
   int read = 0;
   int key = 0;
-  anRead = analogRead(A0);
-//  delay(50);
   read = analogRead(A0);
-  if(read == anRead){
-    if(read>1000){key=0;}
-    else if(read<20){key=1;}
-    else if(read>120 && read<140){key=2;}
-    else if(read>310 && read<340){key=3;}
-    else if(read>470 && read<500){key=4;}
-    else if(read>710 && read<750){key=5;}
-    Serial.print("botao: ");
-    Serial.println(key);
-    return key;
+  if(read>1000){
+    key=0;
+  }
+  else{
+    Serial.print("read: ");
+    Serial.println(read);
+    Serial.print("millis: ");
+    Serial.println(millis());
+    Serial.print("debounce Time: ");
+    Serial.println(debounceTime);
+    if((millis() - debounceTime) > debounceDelay){
+      if(read<20){key=1;delay(200);}
+        else if(read>120 && read<140){key=2;delay(200);}
+        else if(read>310 && read<340){key=3;}
+        else if(read>470 && read<500){key=4;}
+        else if(read>710 && read<750){key=5;}
+        Serial.print("botao: ");
+        Serial.println(key);
+        return key;
+    }
   }
 }
 
-/*
-boolean debounce(boolean last){
-  boolean current = readKey();
-  if(last != current){
-    delay(10);
-    current = readKey();
-  }
-  return current;
-}
-*/
 
 void setup(){
 
@@ -152,45 +147,39 @@ void setup(){
 
 void loop(){
 
-  //
-
+  //RTC
   DateTime now = rtc.now();
 
+    debounceTime = millis();
+
   //Debounce
-  int button = 0;
-  button = readKey();
-  delay(200);
-  if(button == 1){currentUp = HIGH; lastUp = LOW;}
-  else if (button == 2){currentDown = HIGH;}
-  Serial.print("Loop: ");
-  Serial.println(button);
-  //currentUp = debounce(lastUp);
-  //currentDown = debounce(lastDown);
+  if(analogRead(A0) < 1000){
+    int button = readKey();
+    switch(button){
+      case 1:{
+        lcd.clear();
+        button = 0;
+        if(pageCounter <3){
+          pageCounter = pageCounter +1;
+        }
+        else if(pageCounter == 3){
+          pageCounter = 1;
+        }
+      }
+      break;
 
-  //Move pages functions
-  //Page Up
-  if(lastUp == LOW && currentUp == HIGH){
-    lcd.clear();
-    if(pageCounter <3){
-      pageCounter = pageCounter +1;
-    }
-    else if(pageCounter == 3){
-      pageCounter = 1;
+      case 2:{
+        lcd.clear();
+        if(pageCounter > 1){
+          pageCounter = pageCounter - 1;
+        }
+        else{
+          pageCounter = 1;
+        }
+      }
+      break;
     }
   }
-  lastUp = currentUp;
-
-  //Page Down
-  if(lastDown == LOW && currentDown == HIGH){
-    lcd.clear();
-    if(pageCounter > 1){
-      pageCounter = pageCounter - 1;
-    }
-    else{
-      pageCounter = 1;
-    }
-  }
-  lastDown = currentDown;
 
 
   //Screens
