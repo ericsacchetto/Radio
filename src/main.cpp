@@ -2,9 +2,13 @@
 #include <LiquidCrystal_I2C.h>
 #include "RTClib.h"
 #include <Wire.h>
+#include "Timer.h"
 
 
 //Definitions
+
+Timer t;
+
 //LCD
 LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 20 chars and 4 line
 
@@ -18,7 +22,8 @@ int timeSet = 5;
 
 //Debounce
 unsigned long debounceTime = 0;
-unsigned long debounceDelay = 2000;
+unsigned long debounceDelay = 2000UL;
+unsigned long timerBackligth = 0;
 
 //BigFont
 byte x10[8] = {0x07,0x07,0x07,0x00,0x00,0x00,0x00,0x00};
@@ -97,26 +102,16 @@ int readKey(){
   int read = 0;
   int key = 0;
   read = analogRead(A0);
-  if(read>1000){
-    key=0;
-  }
-  else{
-    Serial.print("read: ");
-    Serial.println(read);
-    Serial.print("millis: ");
-    Serial.println(millis());
-    Serial.print("debounce Time: ");
-    Serial.println(debounceTime);
-    if((millis() - debounceTime) > debounceDelay){
-      if(read<20){key=1;delay(200);}
-        else if(read>120 && read<140){key=2;delay(200);}
-        else if(read>310 && read<340){key=3;}
-        else if(read>470 && read<500){key=4;}
-        else if(read>710 && read<750){key=5;}
-        Serial.print("botao: ");
-        Serial.println(key);
-        return key;
-    }
+  delay(600);
+  if(millis() - debounceTime > debounceDelay){  //Not working
+    debounceTime = millis();                    //Not working
+    if(read>1000){key=0;}
+    else if(read<20){key=1;}
+    else if(read>120 && read<140){key=2;}
+    else if(read>310 && read<340){key=3;}
+    else if(read>470 && read<500){key=4;}
+    else if(read>710 && read<750){key=5;}
+    return key;
   }
 }
 
@@ -131,7 +126,6 @@ void setup(){
   //LCD init
   Wire.begin();
   lcd.init();
-  lcd.backlight();
 
   lcd.begin(20, 4);
   lcd.createChar(0, x10);                      // digit piece
@@ -149,8 +143,6 @@ void loop(){
 
   //RTC
   DateTime now = rtc.now();
-
-    debounceTime = millis();
 
   //Debounce
   if(analogRead(A0) < 1000){
@@ -181,10 +173,20 @@ void loop(){
     }
   }
 
-
+  boolean backlightFlag = LOW;
   //Screens
   switch(pageCounter){
     case 1:{
+      if(analogRead(A0) < 1000){
+        lcd.backlight();
+        timerBackligth = millis();
+        backlightFlag = HIGH;
+      }
+      if(millis() - timerBackligth > 5000UL && backlightFlag == HIGH){
+        lcd.noBacklight();
+        backlightFlag = LOW;
+      }
+
       if (now.hour()>9){hourDecimal = (now.hour()/10);}
       else{hourDecimal = 0;}
       hourUnit = now.hour()%10;
