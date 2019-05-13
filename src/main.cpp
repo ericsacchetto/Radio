@@ -173,18 +173,18 @@ void loop(){
     }
   }
 
-  boolean backlightFlag = LOW;
+
   //Screens
   switch(pageCounter){
     case 1:{
       if(analogRead(A0) < 1000){
         lcd.backlight();
         timerBackligth = millis();
-        backlightFlag = HIGH;
+
       }
-      if(millis() - timerBackligth > 5000UL && backlightFlag == HIGH){
+      if(millis() - timerBackligth > 5000){
         lcd.noBacklight();
-        backlightFlag = LOW;
+  
       }
 
       if (now.hour()>9){hourDecimal = (now.hour()/10);}
