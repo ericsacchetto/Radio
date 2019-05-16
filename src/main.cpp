@@ -153,7 +153,7 @@ void loop(){
     lcd.noBacklight();
   }
 
-  Serial.print(switchPot);
+//  Serial.print(switchPot);
 
   //RTC
   DateTime now = rtc.now();
