@@ -115,8 +115,10 @@ int readKey(){
   }
 }
 
-
+int switchPot = 0;
 void setup(){
+  pinMode(9, INPUT);
+
 
   Serial.begin(9600);
 
@@ -126,6 +128,8 @@ void setup(){
   //LCD init
   Wire.begin();
   lcd.init();
+
+
 
   lcd.begin(20, 4);
   lcd.createChar(0, x10);                      // digit piece
@@ -140,6 +144,16 @@ void setup(){
 }
 
 void loop(){
+  switchPot = digitalRead(9);
+
+  if(switchPot == 0){
+    lcd.backlight();
+  }
+  else if(switchPot == 1){
+    lcd.noBacklight();
+  }
+
+  Serial.print(switchPot);
 
   //RTC
   DateTime now = rtc.now();
@@ -180,11 +194,10 @@ void loop(){
       if(analogRead(A0) < 1000){
         lcd.backlight();
         timerBackligth = millis();
-
       }
+
       if(millis() - timerBackligth > 5000){
         lcd.noBacklight();
-  
       }
 
       if (now.hour()>9){hourDecimal = (now.hour()/10);}
