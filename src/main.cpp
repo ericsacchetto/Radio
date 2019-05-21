@@ -144,14 +144,6 @@ void setup(){
 }
 
 void loop(){
-  switchPot = digitalRead(9);
-
-  if(switchPot == 0){
-    lcd.backlight();
-  }
-  else if(switchPot == 1){
-    lcd.noBacklight();
-  }
 
 //  Serial.print(switchPot);
 
@@ -239,6 +231,12 @@ void loop(){
     case 2:{
       lcd.setCursor(5,0);
       lcd.print("Page 2");
+      if(digitalRead(4) == 1){
+        lcd.backlight();
+      }
+      else if(digitalRead(4) == 0){
+        lcd.noBacklight();
+      }
     }
     break;
 
