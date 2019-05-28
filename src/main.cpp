@@ -2,23 +2,16 @@
 #include <LiquidCrystal_I2C.h>
 #include "RTClib.h"
 #include <Wire.h>
-#include "Timer.h"
+
 
 
 //Definitions
-
-Timer t;
 
 //LCD
 LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 20 chars and 4 line
 
 //Menu
 int pageCounter = 1;
-int up = 1;
-int down = 2;
-int right = 3;
-int left = 4;
-int timeSet = 5;
 
 //Debounce
 unsigned long debounceTime = 0;
@@ -103,22 +96,16 @@ int readKey(){
   int key = 0;
   read = analogRead(A0);
   delay(600);
-  if(millis() - debounceTime > debounceDelay){  //Not working
-    debounceTime = millis();                    //Not working
-    if(read>1000){key=0;}
-    else if(read<20){key=1;}
-    else if(read>120 && read<140){key=2;}
-    else if(read>310 && read<340){key=3;}
-    else if(read>470 && read<500){key=4;}
-    else if(read>710 && read<750){key=5;}
-    return key;
-  }
+  if(read>1000){key=0;}
+  else if(read<20){key=1;}
+  else if(read>120 && read<140){key=2;}
+  else if(read>310 && read<340){key=3;}
+  else if(read>470 && read<500){key=4;}
+  else if(read>710 && read<750){key=5;}
+  return key;
 }
 
-int switchPot = 0;
 void setup(){
-  pinMode(9, INPUT);
-
 
   Serial.begin(9600);
 
@@ -128,8 +115,6 @@ void setup(){
   //LCD init
   Wire.begin();
   lcd.init();
-
-
 
   lcd.begin(20, 4);
   lcd.createChar(0, x10);                      // digit piece
@@ -144,15 +129,27 @@ void setup(){
 }
 
 void loop(){
+  //Activate backlight and set screen 2 when switched on
+  if(digitalRead(4) == 0){
+    lcd.noBacklight();
+    pageCounter = 1;
+  }
 
-//  Serial.print(switchPot);
+  if(digitalRead(4) == 1 && pageCounter == 1){
+    lcd.backlight();
+    lcd.clear();
+    pageCounter = 2;
+  }
 
   //RTC
   DateTime now = rtc.now();
 
   //Debounce
+/*
   if(analogRead(A0) < 1000){
     int button = readKey();
+    Serial.print("Botao ");
+    Serial.print(button);
     switch(button){
       case 1:{
         lcd.clear();
@@ -178,19 +175,12 @@ void loop(){
       break;
     }
   }
-
+*/
 
   //Screens
+  int setHour, setMinute, setSecond, setDay, setMonth, setYear, setDOW;
   switch(pageCounter){
     case 1:{
-      if(analogRead(A0) < 1000){
-        lcd.backlight();
-        timerBackligth = millis();
-      }
-
-      if(millis() - timerBackligth > 5000){
-        lcd.noBacklight();
-      }
 
       if (now.hour()>9){hourDecimal = (now.hour()/10);}
       else{hourDecimal = 0;}
@@ -231,18 +221,78 @@ void loop(){
     case 2:{
       lcd.setCursor(5,0);
       lcd.print("Page 2");
-      if(digitalRead(4) == 1){
-        lcd.backlight();
-      }
-      else if(digitalRead(4) == 0){
-        lcd.noBacklight();
+      if(readKey() == 5){
+        lcd.clear();
+        pageCounter = 3;
       }
     }
     break;
 
     case 3:{
-      lcd.setCursor(5, 1);
-      lcd.print("page 3");
+
+    //  int setHour, setMinute, setSecond, setDay, setMonth, setYear, setDOW;
+
+      //Showing hour in two digits format
+      String myHourString = "";
+      setHour = now.hour();
+      if(setHour < 10 ){
+        myHourString = '0';
+      }
+      myHourString.concat(setHour);
+
+      //Showing minute in two digits fotmat
+      String myMinString = "";
+      setMinute = now.minute();
+      if(setMinute < 10 ){
+        myMinString = '0';
+      }
+      myMinString.concat(setMinute);
+
+      //Showing seconds in two digits format
+      String mySecString = "";
+      //setSecond = now.second();
+      if(setSecond < 10 ){
+        mySecString = '0';
+      }
+      mySecString.concat(setSecond);
+
+      //Showing day in two digits format
+      String myDayString = "";
+      setDay = now.day();
+      if(readKey() == 4){
+        setDay++;
+      }
+      if(setDay < 10 ){
+        myDayString = '0';
+      }
+      myDayString.concat(setDay);
+
+      //Showing month in two digits format
+      String myMonString = "";
+      setMonth = now.month();
+      if(setMonth < 10 ){
+        myMonString = '0';
+      }
+      myMonString.concat(setMonth);
+
+
+      setYear = now.year();
+      setDOW = now.dayOfTheWeek();
+
+      lcd.setCursor(1, 1);
+      lcd.print(myHourString);
+      lcd.print(":");
+      lcd.print(myMinString);
+      lcd.print(":");
+      lcd.print(mySecString);
+      lcd.print(" ");
+      lcd.print(myDayString);
+      lcd.print("/");
+      lcd.print(myMonString);
+      lcd.print("/");
+      lcd.print(setYear);
+
+
     }
     break;
 
