@@ -95,7 +95,7 @@ int readKey(){
   int read = 0;
   int key = 0;
   read = analogRead(A0);
-  delay(600);
+  delay(200);
   if(read>1000){key=0;}
   else if(read<20){key=1;}
   else if(read>120 && read<140){key=2;}
@@ -132,6 +132,7 @@ int setHour, setMinute, setSecond, setDay, setMonth, setYear, setDOW;
 int counter = 0;
 int itemCounter = 0;
 String item;
+
 void loop(){
   //Activate backlight and set screen 2 when switched on
   if(digitalRead(4) == 0){
@@ -148,44 +149,10 @@ void loop(){
   //RTC
   DateTime now = rtc.now();
 
-  //Debounce
-/*
-  if(analogRead(A0) < 1000){
-    int button = readKey();
-    Serial.print("Botao ");
-    Serial.print(button);
-    switch(button){
-      case 1:{
-        lcd.clear();
-        button = 0;
-        if(pageCounter <3){
-          pageCounter = pageCounter +1;
-        }
-        else if(pageCounter == 3){
-          pageCounter = 1;
-        }
-      }
-      break;
-
-      case 2:{
-        lcd.clear();
-        if(pageCounter > 1){
-          pageCounter = pageCounter - 1;
-        }
-        else{
-          pageCounter = 1;
-        }
-      }
-      break;
-    }
-  }
-*/
 
   //Screens
 
-  switch(pageCounter){
-    case 1:{
-
+  if(pageCounter == 1){
       if (now.hour()>9){hourDecimal = (now.hour()/10);}
       else{hourDecimal = 0;}
       hourUnit = now.hour()%10;
@@ -220,9 +187,8 @@ void loop(){
       lcd.print(" ");
       lcd.print(daysOfTheWeek[now.dayOfTheWeek()]);
     }
-    break;
 
-    case 2:{
+    else if(pageCounter == 2){
       //Showing hour in two digits format
       String myHourString = "";
       setHour = now.hour();
@@ -293,9 +259,8 @@ void loop(){
         pageCounter = 3;
       }
     }
-    break;
 
-    case 3:{
+    else if(pageCounter == 3){
       if(counter == 0){
         setHour = now.hour();
         setMinute = now.minute();
@@ -316,7 +281,7 @@ void loop(){
       else if(itemCounter == 3){item = "Day";}
       else if(itemCounter == 4){item = "Month";}
       else if(itemCounter == 5){item = "Year";}
-      else if(itemCounter == 6){item = "Day of the week";}
+      //else if(itemCounter == 6){item = "Day of the week";}
 
       if(readKey() == 1){
         itemCounter++;
@@ -329,6 +294,11 @@ void loop(){
       String myHourString = "";
       if(readKey() == 3 && itemCounter == 0){
         setHour++;
+        if(setHour == 25){setHour = 0;}
+      }
+      if(readKey() == 4 && itemCounter == 0){
+        setHour--;
+        if(setHour == -1){setHour = 24;}
       }
       if(setHour < 10 ){
         myHourString = '0';
@@ -337,7 +307,14 @@ void loop(){
 
       //Showing minute in two digits fotmat
       String myMinString = "";
-      //setMinute = now.minute();
+      if(readKey() == 3 && itemCounter == 1){
+        setMinute++;
+        if(setMinute == 60){setMinute = 0;}
+      }
+      if(readKey() == 4 && itemCounter == 1){
+        setMinute--;
+        if(setMinute == -1){setMinute = 59;}
+      }
       if(setMinute < 10 ){
         myMinString = '0';
       }
@@ -345,7 +322,14 @@ void loop(){
 
       //Showing seconds in two digits format
       String mySecString = "";
-      //setSecond = now.second();
+      if(readKey() == 3 && itemCounter == 2){
+        setSecond++;
+        if(setSecond == 60){setSecond = 0;}
+      }
+      if(readKey() == 4 && itemCounter == 2){
+        setSecond--;
+        if(setSecond == -1){setSecond = 59;}
+      }
       if(setSecond < 10 ){
         mySecString = '0';
       }
@@ -353,7 +337,14 @@ void loop(){
 
       //Showing day in two digits format
       String myDayString = "";
-      //setDay = now.day();
+      if(readKey() == 3 && itemCounter == 3){
+        setDay++;
+        if(setDay == 32){setDay = 0;}
+      }
+      if(readKey() == 4 && itemCounter == 3){
+        setDay--;
+        if(setDay == -1){setDay = 31;}
+      }
       if(setDay < 10 ){
         myDayString = '0';
       }
@@ -361,7 +352,14 @@ void loop(){
 
       //Showing month in two digits format
       String myMonString = "";
-      //setMonth = now.month();
+      if(readKey() == 3 && itemCounter == 4){
+        setMonth++;
+        if(setMonth == 13){setMonth = 0;}
+      }
+      if(readKey() == 4 && itemCounter == 4){
+        setMonth--;
+        if(setMonth == -1){setMonth = 12;}
+      }
       if(setMonth < 10 ){
         myMonString = '0';
       }
@@ -369,6 +367,14 @@ void loop(){
 
       //Showing year in two digits format
       String myYearString = "";
+      if(readKey() == 3 && itemCounter == 5){
+        setYear++;
+        if(setYear == 100){setYear = 0;}
+      }
+      if(readKey() == 4 && itemCounter == 5){
+        setYear--;
+        if(setYear == -1){setYear = 99;}
+      }
       if(setYear > 99){
         setYear -= 2000;
       }
@@ -390,11 +396,14 @@ void loop(){
       lcd.print("/");
       lcd.print(myYearString);
 
+      if(readKey() == 5){
+        rtc.adjust(DateTime(setYear, setMonth, setDay, setHour, setMinute, setSecond));
+        lcd.clear();
+        pageCounter = 2;
+      }
+
 
 
     }
-    break;
-
-  }
 
 }
