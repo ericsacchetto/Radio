@@ -105,6 +105,74 @@ int readKey(){
   return key;
 }
 
+int setHour, setMinute, setSecond, setDay, setMonth, setYear;
+void showTime(){
+  DateTime now = rtc.now();
+
+  //Showing hour in two digits format
+  String myHourString = "";
+  setHour = now.hour();
+  if(setHour < 10 ){
+    myHourString = '0';
+  }
+  myHourString.concat(setHour);
+
+  //Showing minute in two digits fotmat
+  String myMinString = "";
+  setMinute = now.minute();
+  if(setMinute < 10 ){
+    myMinString = '0';
+  }
+  myMinString.concat(setMinute);
+
+  //Showing seconds in two digits format
+  String mySecString = "";
+  setSecond = now.second();
+  if(setSecond < 10 ){
+    mySecString = '0';
+  }
+  mySecString.concat(setSecond);
+
+  //Showing day in two digits format
+  String myDayString = "";
+  setDay = now.day();
+  if(setDay < 10 ){
+    myDayString = '0';
+  }
+  myDayString.concat(setDay);
+
+  //Showing month in two digits format
+  String myMonString = "";
+  setMonth = now.month();
+  if(setMonth < 10 ){
+    myMonString = '0';
+  }
+  myMonString.concat(setMonth);
+
+  //Showing year in two digits format
+  String myYearString = "";
+  if(now.year() > 99){
+    setYear = now.year()-2000UL;
+  }
+  if(setYear < 10){
+    myYearString = '0';
+  }
+  myYearString.concat(setYear);
+
+  lcd.setCursor(1, 3);
+  lcd.print(myHourString);
+  lcd.print(":");
+  lcd.print(myMinString);
+  lcd.print(":");
+  lcd.print(mySecString);
+  lcd.print(" ");
+  lcd.print(myDayString);
+  lcd.print("/");
+  lcd.print(myMonString);
+  lcd.print("/");
+  lcd.print(myYearString);
+}
+
 void setup(){
 
   Serial.begin(9600);
@@ -128,11 +196,9 @@ void setup(){
 
 }
 
-int setHour, setMinute, setSecond, setDay, setMonth, setYear, setDOW;
 int counter = 0;
 int itemCounter = 0;
 String item;
-
 void loop(){
   //Activate backlight and set screen 2 when switched on
   if(digitalRead(4) == 0){
@@ -151,7 +217,6 @@ void loop(){
 
 
   //Screens
-
   if(pageCounter == 1){
       if (now.hour()>9){hourDecimal = (now.hour()/10);}
       else{hourDecimal = 0;}
@@ -189,70 +254,8 @@ void loop(){
     }
 
     else if(pageCounter == 2){
-      //Showing hour in two digits format
-      String myHourString = "";
-      setHour = now.hour();
-      if(setHour < 10 ){
-        myHourString = '0';
-      }
-      myHourString.concat(setHour);
 
-      //Showing minute in two digits fotmat
-      String myMinString = "";
-      setMinute = now.minute();
-      if(setMinute < 10 ){
-        myMinString = '0';
-      }
-      myMinString.concat(setMinute);
-
-      //Showing seconds in two digits format
-      String mySecString = "";
-      setSecond = now.second();
-      if(setSecond < 10 ){
-        mySecString = '0';
-      }
-      mySecString.concat(setSecond);
-
-      //Showing day in two digits format
-      String myDayString = "";
-      setDay = now.day();
-      if(setDay < 10 ){
-        myDayString = '0';
-      }
-      myDayString.concat(setDay);
-
-      //Showing month in two digits format
-      String myMonString = "";
-      setMonth = now.month();
-      if(setMonth < 10 ){
-        myMonString = '0';
-      }
-      myMonString.concat(setMonth);
-
-      //Showing year in two digits format
-      String myYearString = "";
-      if(now.year() > 99){
-        setYear = now.year()-2000UL;
-      }
-      if(setYear < 10){
-        myYearString = '0';
-      }
-      myYearString.concat(setYear);
-
-      setDOW = now.dayOfTheWeek();
-
-      lcd.setCursor(1, 3);
-      lcd.print(myHourString);
-      lcd.print(":");
-      lcd.print(myMinString);
-      lcd.print(":");
-      lcd.print(mySecString);
-      lcd.print(" ");
-      lcd.print(myDayString);
-      lcd.print("/");
-      lcd.print(myMonString);
-      lcd.print("/");
-      lcd.print(myYearString);
+      showTime();
 
       if(readKey() == 5){
         lcd.clear();
@@ -261,6 +264,7 @@ void loop(){
     }
 
     else if(pageCounter == 3){
+
       if(counter == 0){
         setHour = now.hour();
         setMinute = now.minute();
@@ -396,13 +400,12 @@ void loop(){
       lcd.print("/");
       lcd.print(myYearString);
 
+
       if(readKey() == 5){
         rtc.adjust(DateTime(setYear, setMonth, setDay, setHour, setMinute, setSecond));
         lcd.clear();
         pageCounter = 2;
       }
-
-
 
     }
 
