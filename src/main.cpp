@@ -2,10 +2,19 @@
 #include <LiquidCrystal_I2C.h>
 #include "RTClib.h"
 #include <Wire.h>
+#include "radio.h"
+#include "TEA5767.h"
 
 
 
 //Definitions
+
+//RADIO
+#define FIX_BAND RADIO_BAND_FM
+int FIX_STATION = 9410;
+
+TEA5767 radio;
+
 
 //LCD
 LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 20 chars and 4 line
@@ -36,6 +45,14 @@ int minUnit;
 int secDecimal;
 int secUnit;
 int aRead = 0;
+
+void displayFrequency()
+{
+  char s[12];
+  radio.formatFrequency(s, sizeof(s));
+  lcd.setCursor(0,0);
+  lcd.print(s);
+}
 
 //BigFont Characters
 void doNumber(byte num, byte r, byte c) {
@@ -190,7 +207,7 @@ void showTime(){
 
 void setup(){
 
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
   //Manual RTC adjust (YYYY, MM, DD, HH, MM, SS)
   //rtc.adjust(DateTime(2019, 4, 21, 12, 58, 0));
@@ -208,6 +225,14 @@ void setup(){
   lcd.createChar(5, x15);                      // digit piece
   lcd.createChar(6, x16);                      // digit piece
   lcd.createChar(7, x17);                      // digit piece (colon)
+
+  //Radio TEA5767
+  radio.init();
+  radio.setBandFrequency(RADIO_BAND_FM, FIX_STATION); // 5. preset.
+  radio.setMono(false);
+  radio.setMute(true);
+  radio.setVolume(4);
+  radio.debugEnable();
 
 }
 
@@ -235,6 +260,7 @@ void loop(){
     }
   }
 
+
   if(digitalRead(4) == 1 && pageCounter == 1){
     lcd.backlight();
     lcd.clear();
@@ -243,6 +269,9 @@ void loop(){
 
   //RTC
   DateTime now = rtc.now();
+
+  radio.debugAudioInfo();
+  radio.debugRadioInfo();
 
 
   //Screens
@@ -285,11 +314,33 @@ void loop(){
 
     else if(pageCounter == 2){
 
+      radio.setMute(false);
+
+      displayFrequency();
+
       showTime();
 
-      if(readKey() == 5){
+      int k = readKey();
+      if(k == 5){
         lcd.clear();
         pageCounter = 3;
+      }
+      else if(k == 1){
+        FIX_STATION++;
+        radio.setBandFrequency(RADIO_BAND_FM, FIX_STATION);
+
+      }
+      else if(k == 2){
+        FIX_STATION--;
+        radio.setBandFrequency(RADIO_BAND_FM, FIX_STATION);
+      }
+      else if(k == 3){
+        int v = radio.getVolume();
+        if (v < 15) radio.setVolume(++v);
+      }
+      else if(k == 4){
+        int v = radio.getVolume();
+        if (v > 0) radio.setVolume(--v);
       }
     }
 
