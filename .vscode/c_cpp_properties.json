@@ -1,0 +1,70 @@
+{
+    "configurations": [
+        {
+            "name": "!!! WARNING !!! AUTO-GENERATED FILE, PLEASE DO NOT MODIFY IT AND USE https://docs.platformio.org/page/projectconf/section_env_build.html#build-flags"
+        },
+        {
+            "name": "Win32",
+            "includePath": [
+                "C:/Users/erics/.platformio/packages/framework-arduinoavr/cores/arduino",
+                "C:/Users/erics/.platformio/packages/framework-arduinoavr/variants/eightanaloginputs",
+                "C:/Users/erics/.platformio/lib/LiquidCrystal_I2C_ID576",
+                "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/Wire/src",
+                "C:/Users/erics/.platformio/lib/RTClib_ID83",
+                "C:/Users/erics/.platformio/lib/Radio_ID903/src",
+                "C:/Users/erics/.platformio/lib/Adafruit Unified Sensor_ID31",
+                "C:/Users/erics/.platformio/lib/DHT sensor library_ID19",
+                "C:/Users/erics/.platformio/lib/LiquidCrystal_ID887/src",
+                "C:/Users/erics/.platformio/lib/RTC_ID274/src",
+                "C:/Users/erics/.platformio/lib/Timer_ID75",
+                "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/EEPROM/src",
+                "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/HID/src",
+                "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SPI/src",
+                "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SoftwareSerial/src",
+                "C:/Users/erics/.platformio/packages/tool-unity",
+                "c:/Users/erics/Documents/PlatformIO/Projects/RadioV1/include",
+                "c:/Users/erics/Documents/PlatformIO/Projects/RadioV1/src",
+                ""
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": "${workspaceRoot}/.vscode/.browse.c_cpp.db",
+                "path": [
+                    "C:/Users/erics/.platformio/packages/framework-arduinoavr/cores/arduino",
+                    "C:/Users/erics/.platformio/packages/framework-arduinoavr/variants/eightanaloginputs",
+                    "C:/Users/erics/.platformio/lib/LiquidCrystal_I2C_ID576",
+                    "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/Wire/src",
+                    "C:/Users/erics/.platformio/lib/RTClib_ID83",
+                    "C:/Users/erics/.platformio/lib/Radio_ID903/src",
+                    "C:/Users/erics/.platformio/lib/Adafruit Unified Sensor_ID31",
+                    "C:/Users/erics/.platformio/lib/DHT sensor library_ID19",
+                    "C:/Users/erics/.platformio/lib/LiquidCrystal_ID887/src",
+                    "C:/Users/erics/.platformio/lib/RTC_ID274/src",
+                    "C:/Users/erics/.platformio/lib/Timer_ID75",
+                    "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/EEPROM/src",
+                    "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/HID/src",
+                    "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SPI/src",
+                    "C:/Users/erics/.platformio/packages/framework-arduinoavr/libraries/__cores__/arduino/SoftwareSerial/src",
+                    "C:/Users/erics/.platformio/packages/tool-unity",
+                    "c:/Users/erics/Documents/PlatformIO/Projects/RadioV1/include",
+                    "c:/Users/erics/Documents/PlatformIO/Projects/RadioV1/src",
+                    ""
+                ]
+            },
+            "defines": [
+                "PLATFORMIO=30607",
+                "ARDUINO_AVR_NANO",
+                "F_CPU=16000000L",
+                "ARDUINO_ARCH_AVR",
+                "ARDUINO=10805",
+                "__AVR_ATmega328P__",
+                ""
+            ],
+            "intelliSenseMode": "clang-x64",
+            "cStandard": "c11",
+            "cppStandard": "c++11",
+            "compilerPath": "\"C:/Users/erics/.platformio/packages/toolchain-atmelavr/bin/avr-gcc.exe\" -mmcu=atmega328p"
+        }
+    ],
+    "version": 4
+}

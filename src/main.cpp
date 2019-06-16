@@ -231,8 +231,9 @@ void setup(){
   radio.setBandFrequency(RADIO_BAND_FM, FIX_STATION); // 5. preset.
   radio.setMono(false);
   radio.setMute(true);
-  radio.setVolume(4);
+  radio.setVolume(1);
   radio.debugEnable();
+  radio.setSoftMute(true);
 
 }
 
@@ -269,9 +270,6 @@ void loop(){
 
   //RTC
   DateTime now = rtc.now();
-
-  radio.debugAudioInfo();
-  radio.debugRadioInfo();
 
 
   //Screens
@@ -367,37 +365,36 @@ void loop(){
       else if(itemCounter == 4){item = "Month";}
       else if(itemCounter == 5){item = "Year";}
 
-/*
-      if(readKey() == 1){
+      int x = readKey();
+
+      if(x == 1){
         itemCounter++;
         Serial.print("ReadKey 1");
       }
-      if(readKey() == 2){
+      if(x == 2){
         itemCounter--;
         Serial.print("ReadKey 2");
       }
-*/
+
       //Showing hour in two digits format
       String myHourString = "";
       if(itemCounter == 0){
-        if(readKey() == 3){setHour++;}
+        if(x == 3){setHour++;}
         if(setHour == 25){setHour = 0;}
-        if(readKey() == 4){setHour--;}
+        if(x == 4){setHour--;}
         if(setHour == -1){setHour = 24;}
         if(setHour < 10 ){myHourString = '0';}
-      myHourString.concat(setHour);
       }
+      myHourString.concat(setHour);
 
       //Showing minute in two digits fotmat
       String myMinString = "";
       if(itemCounter == 1){
-        if(readKey() == 3){
-          setMinute++;
-        }
+        if(x == 3){setMinute++;}
         if(setMinute == 60){setMinute = 0;}
       }
       if(itemCounter == 1){
-        if(readKey() == 4){
+        if(x == 4){
           setMinute--;
         }
         if(setMinute == -1){setMinute = 59;}
@@ -410,13 +407,13 @@ void loop(){
       //Showing seconds in two digits format
       String mySecString = "";
       if(itemCounter == 2){
-        if(readKey() == 3){
+        if(x == 3){
           setSecond++;
         }
         if(setSecond == 60){setSecond = 0;}
       }
       if(itemCounter == 2){
-        if(readKey() == 4){
+        if(x == 4){
           setSecond--;
         }
         if(setSecond == -1){setSecond = 59;}
@@ -429,13 +426,13 @@ void loop(){
       //Showing day in two digits format
       String myDayString = "";
       if(itemCounter == 3){
-        if(readKey() == 3){
+        if(x == 3){
           setDay++;
         }
         if(setDay == 32){setDay = 0;}
       }
       if(itemCounter == 3){
-        if(readKey() == 4){
+        if(x == 4){
           setDay--;
         }
         if(setDay == -1){setDay = 31;}
@@ -448,13 +445,13 @@ void loop(){
       //Showing month in two digits format
       String myMonString = "";
       if(itemCounter == 4){
-        if(readKey() == 3){
+        if(x == 3){
           setMonth++;
         }
         if(setMonth == 13){setMonth = 0;}
       }
       if(itemCounter == 4){
-        if(readKey() == 4){
+        if(x == 4){
           setMonth--;
         }
         if(setMonth == -1){setMonth = 12;}
@@ -467,13 +464,13 @@ void loop(){
       //Showing year in two digits format
       String myYearString = "";
       if(itemCounter == 5){
-        if(readKey() == 3){
+        if(x == 3){
           setYear++;
         }
         if(setYear == 100){setYear = 0;}
       }
       if(itemCounter == 5){
-        if(readKey() == 4){
+        if(x == 4){
           setYear--;
         }
         if(setYear == -1){setYear = 99;}
@@ -500,7 +497,7 @@ void loop(){
       lcd.print(myYearString);
 
 
-      if(readKey() == 5){
+      if(x == 5){
         rtc.adjust(DateTime(setYear, setMonth, setDay, setHour, setMinute, setSecond));
         lcd.clear();
         pageCounter = 2;
